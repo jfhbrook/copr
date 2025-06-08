@@ -5,7 +5,7 @@ Summary:        Fully-featured Mopidy frontend client
 
 License:        Apache-2.0
 URL:            https://github.com/jaedb/iris
-Source:         %{pypi_source Mopidy-Iris}
+Source:         %{pypi_source mopidy-iris}
 
 BuildArch:      noarch
 BuildRequires:  python3-devel
@@ -23,7 +23,7 @@ Summary:        %{summary}
 %description -n python3-mopidy-iris %_description
 
 %prep
-%autosetup -p1 -n Mopidy-Iris-%{version}
+%autosetup -p1 -n mopidy-iris-%{version}
 
 
 %generate_buildrequires
