@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+topdir="${topdir:?}"
+outdir="${outdir:?}"
+downloaddir="${downloaddir:?}"
+sourcedir="${sourcedir:?}"
+spec="${spec:?}"
+
+# shellcheck disable=SC2016
+AWK_MATCH_NON_SOURCE_LINES='!/^ *Source[0-9]: *.*/ { print $0 }'
+# shellcheck disable=SC2016
+AWK_MATCH_SOURCE_LINES='match($0, /^( *Source([0-9]): *)(.*)/, groups) {
+  print groups[1] "\t" groups[2] "\t" groups[3]
+}'
+
+function extract-name {
+  # Extract the name from a spec file
+  awk '/^ *Name: */ { print $2 }' "${1:?}"
+}
+
+function extract-version {
+  # Extract the version from a spec file
+  awk '/^ *Version: */ { print $2 }' "${1:?}"
+}
+
+function render-spec {
+  #
+  # Render a spec file with variables filled in
+  #
+
+  rpmspec --define "_topdir ${topdir}" \
+    --define "_srcrpmdir ${outdir}" \
+    -P "${template}"
+}
+
+function render-edit-source-line {
+  #
+  # Render awk source that will edit a source line to point to a local source
+  # file.
+  #
+
+  local index
+  local label
+  local src
+
+  index="${1:?}"
+  label="${2:?}"
+  src="${3:?}"
+
+  echo '/^ *Source'"${index}"': *.*/ { print "'"${label}"'" "'"${src}"'"}'
+}
+
+function fetch-source-and-render-script {
+  # Fetch source and render an awk script that can rewrite the spec file to
+  # use those sources.
+  #
+  # (Believe it or not, procedurally generating an awk script is the most
+  # straightforward way of staging the edits we want to make.)
+
+  local name
+  local version
+  local label
+  local index
+  local url
+
+  name="${1:?}"
+  version="${2:?}"
+
+  echo "${AWK_MATCH_NON_SOURCE_LINES}" > "${script_file}"
+
+  render-spec \
+    | awk "${AWK_MATCH_SOURCE_LINES}" \
+    | while read -r line; do
+      label="$(echo "${line}" | cut -d$'\t' -f1)"
+      index="$(echo "${line}" | cut -d$'\t' -f2)"
+      url="$(echo "${line}" | cut -d$'\t' -f3)"
+
+      # Fetch the source, save the result to SOURCES and get the new filename
+      src="$(fetch-source "${name}" "${version}" "${index}" "${url}")"
+
+      render-edit-source-line "${label}" "${index}" "${url}"
+    done
+}
+
+function log-script {
+  # At this point, we should've downloaded all the sources, putting the results
+  # in the SOURCES directory, and have our awk script ready to generate our new
+  # spec file. So let's generate that spec file??
+
+  echo "--- running the following script in awk: ---" 1>&2
+  while read -r line; do
+    echo "${line}" 1>&2
+  done <<< "${script_file}"
+  echo "--- end script ---" 1>&2
+}
+
+function main {
+  local name
+  local version
+  local template
+  local script_file
+
+  if [ -f "${spec}" ]; then
+    template="${spec}"
+  else
+    template="${spec}.in"
+  fi
+
+  name="$(extract-name "${template}")"
+  version="$(extract-version "${template}")"
+
+  script_file="$(mktemp)"
+
+  fetch-source-and-render-script "${name}" "${version}" >> "${script_file}"
+  log-script
+
+  awk -f "${script_file}" < "${template}" > "${spec}.out"
+
+  mv "${spec}.out" "${spec}"
+  rm "${script_file}"
+}
+
+main "$@"

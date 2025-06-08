@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+topdir="${topdir:?}"
+outdir="${outdir:?}"
+spec="${spec:?}"
+
+rpmbuild \
+  --define "_topdir ${topdir}" \
+  --define "_srcrpmdir ${outdir}" \
+  -bs "${spec}"
