@@ -12,7 +12,7 @@ Some of these projects - such as `yq` - use COPR's `make srpm` builds.
 
 These builds use [the Makefile in the `.copr` folder](./.copr/Makefile) as their entry point. I *believe* the only task used is `srpm`.
 
-This `Makefile` is configured to call `./copr/srpm.sh` in the package's directory. Typically, this script will source [`prelude.sh`](./prelude.sh), which sets some expected environment variables and exposes the tools stored in [`./bin`](./bin).
+This `Makefile` is configured to call `./copr/srpm.sh` in the package's directory. Typically, this script will source [`prelude.sh`](./.copr/prelude.sh), which sets some expected environment variables and exposes the tools stored in [`bin`](./.copr/bin).
 
 Of particular interest will be the `download-sources` script, which downloads
 source files based on the `Source[0-9]` entries in a `.spec.in` file.
