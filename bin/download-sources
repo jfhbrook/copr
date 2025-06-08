@@ -1,125 +1,102 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -euxo pipefail
 
-topdir="${topdir:?}"
-outdir="${outdir:?}"
-downloaddir="${downloaddir:?}"
-sourcedir="${sourcedir:?}"
-spec="${spec:?}"
+# In most cases, we'll be generating a spec based on a .in file. But in the
+# case where we run multiple scripts like this, the spec might already be
+# "partially" generated.
+# shellcheck disable=SC2154
+if [ -f "${spec}" ]; then
+  template="${spec}"
+else
+  template="${spec}.in"
+fi
 
+name="$(awk '/^ *Name: */ { print $2 }' "${template}")"
+version="$(awk '/^ *Version: */ { print $2 }' "${template}")"
+
+# Believe it or not, procedurally generating an awk script is the most
+# straightforward way of staging the edits we want to make. 
+script="$(mktemp)"
+
+# For non-matches, just print the line. This regexp HAS to match the one used
+# in the match loop, groups excepted.
 # shellcheck disable=SC2016
-AWK_MATCH_NON_SOURCE_LINES='!/^ *Source[0-9]: *.*/ { print $0 }'
-# shellcheck disable=SC2016
-AWK_MATCH_SOURCE_LINES='match($0, /^( *Source([0-9]): *)(.*)/, groups) {
-  print groups[1] "\t" groups[2] "\t" groups[3]
-}'
+echo '!/^ *Source[0-9]: *.*/ { print $0 }' > "${script}"
 
-function extract-name {
-  # Extract the name from a spec file
-  awk '/^ *Name: */ { print $2 }' "${1:?}"
-}
+# Download the thing if it's a URL, bundle and create the source tarball, and
+# print the filename
+function fetch {
+  local index="${1}"
+  local url="${2}"
+  local basename
+  local filename
+  local tarname
+  local tarfile
 
-function extract-version {
-  # Extract the version from a spec file
-  awk '/^ *Version: */ { print $2 }' "${1:?}"
-}
+  basename="$(basename "${url}")"
+  # shellcheck disable=SC2154
+  dirname="${downloaddir}/${index}/${name}-${version}"
+  filename="${dirname}/${basename}"
 
-function render-spec {
-  #
-  # Render a spec file with variables filled in
-  #
+  mkdir -p "${dirname}"
+  # shellcheck disable=SC2154
+  mkdir -p "${sourcedir}"
 
-  rpmspec --define "_topdir ${topdir}" \
-    --define "_srcrpmdir ${outdir}" \
-    -P "${template}"
-}
-
-function render-edit-source-line {
-  #
-  # Render awk source that will edit a source line to point to a local source
-  # file.
-  #
-
-  local index
-  local label
-  local src
-
-  index="${1:?}"
-  label="${2:?}"
-  src="${3:?}"
-
-  echo '/^ *Source'"${index}"': *.*/ { print "'"${label}"'" "'"${src}"'"}'
-}
-
-function fetch-source-and-render-script {
-  # Fetch source and render an awk script that can rewrite the spec file to
-  # use those sources.
-  #
-  # (Believe it or not, procedurally generating an awk script is the most
-  # straightforward way of staging the edits we want to make.)
-
-  local name
-  local version
-  local label
-  local index
-  local url
-
-  name="${1:?}"
-  version="${2:?}"
-
-  echo "${AWK_MATCH_NON_SOURCE_LINES}" > "${script_file}"
-
-  render-spec \
-    | awk "${AWK_MATCH_SOURCE_LINES}" \
-    | while read -r line; do
-      label="$(echo "${line}" | cut -d$'\t' -f1)"
-      index="$(echo "${line}" | cut -d$'\t' -f2)"
-      url="$(echo "${line}" | cut -d$'\t' -f3)"
-
-      # Fetch the source, save the result to SOURCES and get the new filename
-      src="$(fetch-source "${name}" "${version}" "${index}" "${url}")"
-
-      render-edit-source-line "${label}" "${index}" "${url}"
-    done
-}
-
-function log-script {
-  # At this point, we should've downloaded all the sources, putting the results
-  # in the SOURCES directory, and have our awk script ready to generate our new
-  # spec file. So let's generate that spec file??
-
-  echo "--- running the following script in awk: ---" 1>&2
-  while read -r line; do
-    echo "${line}" 1>&2
-  done <<< "${script_file}"
-  echo "--- end script ---" 1>&2
-}
-
-function main {
-  local name
-  local version
-  local template
-  local script_file
-
-  if [ -f "${spec}" ]; then
-    template="${spec}"
+  # For sources which are already tarballs, keep the extension the same. But
+  # for everything else, add the extension for the tarball it contains.
+  if [[ ${basename} =~ \.tar\.gz$ ]]; then
+    tarname="${basename}"
   else
-    template="${spec}.in"
+    tarname="${basename}.tar.gz"
+  fi
+  tarfile="${sourcedir}/${tarname}"
+
+  if [ ! -f "${filename}" ]; then
+    if [[ ${url} =~ (https?|ftp|file):// ]]; then
+      # Download the source
+      curl -L "${url}" -o "${filename}" 1>&2
+    else
+      cp "${url}" "${filename}"
+    fi
   fi
 
-  name="$(extract-name "${template}")"
-  version="$(extract-version "${template}")"
+  # This is the format they want!
+  (cd "${downloaddir}/${index}" && tar -czf "${tarfile}" .)
 
-  script_file="$(mktemp)"
-
-  fetch-source-and-render-script "${name}" "${version}" >> "${script_file}"
-  log-script
-
-  awk -f "${script_file}" < "${template}" > "${spec}.out"
-
-  mv "${spec}.out" "${spec}"
-  rm "${script_file}"
+  # The source has been replaced with our tarfile
+  echo "${tarname}"
 }
 
-main "$@"
+rpmspec --define "_topdir ${topdir}" \
+  --define "_srcrpmdir ${outdir}" \
+  -P "${template}" \
+  | awk 'match($0, /^( *Source([0-9]): *)(.*)/, groups) { print groups[1] "\t" groups[2] "\t" groups[3] }' \
+  | while read -r line; do
+    set +x
+    label="$(echo "${line}" | cut -d$'\t' -f1)"
+    index="$(echo "${line}" | cut -d$'\t' -f2)"
+    url="$(echo "${line}" | cut -d$'\t' -f3)"
+    set -x
+
+    # Fetch the source, save the result to SOURCES and get the new filename
+    src="$(fetch "${index}" "${url}")"
+
+    # Add a match to the awk script that will do the edit on the spec file
+    echo '/^ *Source'"${index}"': *.*/ { print "'"${label}"'" "'"${src}"'"}' >> "${script}"
+  done
+
+# At this point, we should've downloaded all the sources, putting the results
+# in the SOURCES directory, and have our awk script ready to generate our new
+# spec file. So let's generate that spec file??
+
+echo "--- running the following script in awk: ---"
+while read -r line; do
+  echo "${line}"
+done <<< "${script}"
+echo "--- end script ---"
+
+awk -f "${script}" < "${template}" > "${spec}.out"
+
+mv "${spec}.out" "${spec}"
+rm "${script}"
