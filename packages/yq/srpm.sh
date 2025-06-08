@@ -4,4 +4,4 @@ source ../../prelude.sh
 
 set-gh-release-version mikefarah/yq
 download-sources
-build-srpm
+build-srpm -bb

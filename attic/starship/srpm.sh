@@ -4,4 +4,4 @@ source ../../prelude.sh
 
 set-gh-release-version starship/starship
 download-sources
-build-srpm
+build-srpm -bb

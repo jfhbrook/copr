@@ -9,4 +9,4 @@ spec="${spec:?}"
 rpmbuild \
   --define "_topdir ${topdir}" \
   --define "_srcrpmdir ${outdir}" \
-  -bs "${spec}"
+  "$@" "${spec}"
