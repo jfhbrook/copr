@@ -1,5 +1,5 @@
 Name:           python-sdbus
-Version:        0.13.0
+Version:        0.14.0
 Release:        %autorelease
 # Fill in the actual package summary to submit package to Fedora
 Summary:        Modern Python D-Bus library. Based on sd-bus from libsystemd.
