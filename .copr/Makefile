@@ -1,4 +1,5 @@
 SHELL = /usr/bin/env bash
+.PHONY: srpm verify
 
 srpm:
 	bash ./copr/srpm.sh
