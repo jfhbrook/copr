@@ -2,5 +2,11 @@
 
 set -euxo pipefail
 
-# shellcheck disable=SC2154
-rpmbuild --define "_topdir ${topdir}" --define "_srcrpmdir ${outdir}" -bs "${spec}"
+topdir="${topdir:?}"
+outdir="${outdir:?}"
+spec="${spec:?}"
+
+rpmbuild \
+  --define "_topdir ${topdir}" \
+  --define "_srcrpmdir ${outdir}" \
+  -bs "${spec}"
