@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ../../prelude.sh
+source ../../.copr/bin/prelude.sh
 
 download-sources
 build-srpm
