@@ -6,13 +6,17 @@ This project contains files for managing my COPR repository:
 
 Note that, generally speaking, this project only manages builds for packages I don't own. Individual projects have their own files for configuring builds in COPR.
 
-## `make srpm` builds
+## Dependencies
 
-Some of these projects - such as `yq` - use COPR's `make srpm` builds.
+This project depends on the tools bundled in [copr-tools](https://github.com/jfhbrook/public/tree/main/copr-tools).
 
-These builds use [the Makefile in the `.copr` folder](./.copr/Makefile) as their entry point. I *believe* the only task used is `srpm`.
+## SRPM Builds
 
-This `Makefile` is configured to call `./copr/srpm.sh` in the package's directory. Typically, this script will source [`prelude.sh`](./.copr/prelude.sh), which sets some expected environment variables and exposes the tools stored in [`bin`](./.copr/bin).
+Some of these projects - such as `yq` - use COPR's SRPM builds.
+
+These builds use [the Makefile in the `.copr` folder](./.copr/Makefile) as their entry point. The only task used is `srpm`.
+
+This `Makefile` is configured to call `./srpm.sh` in the package's directory. Typically, this script will source [`prelude.sh`](./prelude.sh), which sets some expected environment variables and exposes the tools stored in [`bin`](./bin).
 
 Of particular interest will be the `download-sources` script, which downloads
 source files based on the `Source[0-9]` entries in a `.spec.in` file.
