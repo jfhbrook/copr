@@ -24,10 +24,13 @@ clean: clear
   rm -rf ./build
   rm -rf ./downloads
 
+# Fail if there are uncommitted files
+check-dirty:
+  ./scripts/is-dirty.sh
+
 # Apply copr configuration
-apply-copr:
+apply:
   coprctl apply -f ./package.yml
 
-build-copr: apply-copr
-  git push origin
+build: check-dirty apply
   copr build-package jfhbrook/joshiverse --name "$(sed 's/\.spec//' <<< '{{ SPEC }}')"
