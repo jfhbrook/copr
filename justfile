@@ -8,4 +8,4 @@ new template:
 
 # Lint scripts
 lint:
-  shellcheck .copr/bin/*
+  shellcheck prelude.sh ./bin/*
