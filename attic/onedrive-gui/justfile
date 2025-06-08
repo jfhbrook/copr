@@ -2,20 +2,20 @@ SPEC := "onedrive-gui.spec"
 
 # Build the source rpm
 srpm:
-  spec="$(pwd)/{{SPEC}}" outdir="$(pwd)" topdir="$(pwd)/build" downloaddir="$(pwd)/downloads" make -f ../../.copr/Makefile srpm
+  spec="$(pwd)/{{ SPEC }}" outdir="$(pwd)" topdir="$(pwd)/build" downloaddir="$(pwd)/downloads" make -f ../../.copr/Makefile srpm
 
 # Verify the source rpm
 verify:
-  spec="$(pwd)/{{SPEC}}" outdir="$(pwd)" topdir="$(pwd)/build" downloaddir="$(pwd)/downloads" make -f ../../.copr/Makefile verify
+  spec="$(pwd)/{{ SPEC }}" outdir="$(pwd)" topdir="$(pwd)/build" downloaddir="$(pwd)/downloads" bash ../../scripts/verify-srpm.sh
 
 lint:
-  shellcheck ./copr/srpm.sh
+  shellcheck ./srpm.sh
 
 # Build and verify
 test: clear srpm verify
 
 clear:
-  rm -f '{{SPEC}}'
+  rm -f '{{ SPEC }}'
   rm -f *.src.rpm
   rm -f *.tar.gz
 
