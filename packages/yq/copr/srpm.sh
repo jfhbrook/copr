@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ../../.copr/bin/prelude.sh
+source ../../prelude.sh
 
 set-gh-release-version mikefarah/yq
 download-sources
