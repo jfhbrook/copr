@@ -11,7 +11,7 @@ spec:
   description: "Josh Holbrook's personal package registry"
   instructions: "Nothing special - add the copr following the 'quick-enable' directions in the right rail, and start installing stuff!"
   # TODO: homepage and contact are unsupported by the CLI
-  # homepage: "https://github.com/jfhbrook/public"
+  # homepage: "https://github.com/jfhbrook/copr"
   # contact: "josh.holbrook@gmail.com"
   disable_createrepo: "n"
   enable-net: "on"

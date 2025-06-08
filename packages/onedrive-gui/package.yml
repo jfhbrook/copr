@@ -6,7 +6,7 @@ spec:
   auto_rebuild: false
   ownername: jfhbrook
   projectname: joshiverse
-  clone-url: https://github.com/jfhbrook/public
+  clone-url: https://github.com/jfhbrook/copr
   commit: null
   subdir: packages/onedrive-gui
   spec: onedrive-gui.spec

@@ -5,7 +5,7 @@ metadata:
 spec:
   auto_rebuild: false
   projectname: "{{cookiecutter.copr}}"
-  clone-url: "https://github.com/jfhbrook/public"
+  clone-url: "https://github.com/jfhbrook/copr"
   commit: null
   subdir: "packages/{{cookiecutter.package}}"
   spec: "{{cookiecutter.package}}.spec"
