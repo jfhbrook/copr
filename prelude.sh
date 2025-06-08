@@ -17,7 +17,7 @@ function get-sourcedir {
     args+=( --define "_topdir ${topdir}" )
   fi
 
-  args+=( --eval '%{sourcedir}' )
+  args+=( --eval '%{_sourcedir}' )
 
   rpmbuild "${args[@]}"
 }
