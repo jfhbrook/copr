@@ -1,11 +1,11 @@
 Name:           python-mopidy-iris
-Version:        3.70.0
+Version:        3.69.3
 Release:        2
 Summary:        Fully-featured Mopidy frontend client
 
 License:        Apache-2.0
 URL:            https://github.com/jaedb/iris
-Source:         %{pypi_source mopidy-iris}
+Source:         %{pypi_source Mopidy-Iris}
 
 BuildArch:      noarch
 BuildRequires:  python3-devel
@@ -23,7 +23,7 @@ Summary:        %{summary}
 %description -n python3-mopidy-iris %_description
 
 %prep
-%autosetup -p1 -n mopidy-iris-%{version}
+%autosetup -p1 -n Mopidy-Iris-%{version}
 
 
 %generate_buildrequires
