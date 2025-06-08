@@ -58,7 +58,7 @@ function install-buildrequires {
 
 function prelude {
   setup-build-env
-  setuo-build-dirs
+  setup-build-dirs
   install-buildrequires
 }
 
