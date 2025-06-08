@@ -4,4 +4,4 @@ source ../../prelude.sh
 
 set-gh-release-version atanunq/viu
 download-sources
-build-srpm
+build-srpm -bb

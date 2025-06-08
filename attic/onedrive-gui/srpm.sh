@@ -3,4 +3,4 @@
 source ../../prelude.sh
 
 download-sources
-build-srpm
+build-srpm -bs

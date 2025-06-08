@@ -2,4 +2,4 @@
 
 source ../../prelude.sh
 
-build-srpm
+build-srpm -bs
