@@ -2,10 +2,10 @@ SPEC := "python-mopidy-iris.spec"
 
 # Build the source rpm
 srpm:
-  ../../scripts/build-srpm.sh
+  ../../scripts/build-srpm.sh '{{ SPEC }}'
 
 # Verify the source rpm
-verify:
+verify: srpm
   ../../scripts/verify-srpm.sh
 
 lint:

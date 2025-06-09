@@ -16,4 +16,4 @@ export downloaddir
 
 set -x
 
-make -f "${COPR_HOME}/.copr/Makefile" srpm
+make -f "${copr_home}/.copr/Makefile" srpm

@@ -2,7 +2,7 @@ SPEC := "yq.spec"
 
 # Build the source rpm
 srpm:
-  ../../scripts/build-srpm.sh
+  ../../scripts/build-srpm.sh '{{ SPEC }}'
 
 # Verify the source rpm
 verify: srpm
