@@ -2,11 +2,11 @@ SPEC := "yq.spec"
 
 # Build the source rpm
 srpm:
-  spec="$(pwd)/{{ SPEC }}" outdir="$(pwd)" topdir="$(pwd)/build" downloaddir="$(pwd)/downloads" make -f ../../.copr/Makefile srpm
+  ../../scripts/build-srpm.sh
 
 # Verify the source rpm
-verify:
-  spec="$(pwd)/{{ SPEC }}" outdir="$(pwd)" topdir="$(pwd)/build" downloaddir="$(pwd)/downloads" bash ../../scripts/verify-srpm.sh
+verify: srpm
+  ../../scripts/verify-srpm.sh
 
 lint:
   shellcheck ./srpm.sh
@@ -16,19 +16,15 @@ test: clean srpm verify
 
 # Clean files created from building and verifying
 clean:
-  rm -f '{{ SPEC }}'
-  rm -rf ./build
-  rm -rf ./downloads
-  rm -f *.src.rpm
-  rm -f *.tar.gz
+  ../../scripts/clean-srpm.sh '{{ SPEC }}'
 
 # Fail if there are uncommitted files
 check-dirty:
-  ./scripts/is-dirty.sh
+  ../../scripts/is-dirty.sh
 
 # Apply copr configuration
 apply:
   coprctl apply -f ./package.yml
 
 build: check-dirty apply
-  copr build-package jfhbrook/joshiverse --name "$(sed 's/\.spec//' <<< '{{ SPEC }}')"
+  ../../scripts/build-copr-spec.sh '{{ SPEC }}'
