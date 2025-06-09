@@ -9,3 +9,7 @@ new template:
 # Lint scripts
 lint:
   shellcheck ./bin/* ./scripts/*.sh
+
+# Build the Docker image
+build-docker:
+  docker build -t 'copr-dev' .

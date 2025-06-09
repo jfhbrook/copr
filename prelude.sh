@@ -49,17 +49,14 @@ function setup-build-dirs {
   mkdir -p "${downloaddir}"
 }
 
-# TODO: Shouldn't these be listed in the spec?
-function install-buildrequires {
-  if ! which jq; then
-    dnf install -y jq
-  fi
+function install-dependencies {
+  dnf install -y jq
 }
 
 function prelude {
   setup-build-env
   setup-build-dirs
-  install-buildrequires
+  install-dependencies
 }
 
 prelude
