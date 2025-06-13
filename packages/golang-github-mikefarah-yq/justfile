@@ -1,4 +1,4 @@
-SPEC := "yq.spec"
+SPEC := "golang-github-mikefarah-yq.spec"
 
 # Build the source rpm
 srpm:
