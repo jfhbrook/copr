@@ -51,7 +51,7 @@ License:        # FIXME
 # Test fails because of missing file that would need to be bundled...
 %if %{with check}
 %check
-# %cargo_test
+# cargo_test
 %endif
 
 %changelog
