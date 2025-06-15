@@ -28,8 +28,6 @@ License:        # FIXME
 %description -n %{crate} %{_description}
 
 %files       -n %{crate}
-%license .licenses/Apache-LICENSE
-%license .licenses/MIT-LICENSE
 %license LICENSE
 %license LICENSE.dependencies
 %doc CHANGELOG.md
