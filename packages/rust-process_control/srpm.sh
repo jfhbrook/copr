@@ -2,5 +2,5 @@
 
 source ../../prelude.sh
 
-cp starship-fix-metadata-auto.diff "${sourcedir}/"
+cp process_control-fix-metadata-auto.diff "${sourcedir}/"
 build-srpm
