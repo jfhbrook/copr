@@ -13,7 +13,7 @@ License:        MIT
 URL:            https://crates.io/crates/viuer
 Source:         %{crates_source}
 # Automatically generated patch to strip dependencies and normalize metadata
-Patch:          viuer-fix-metadata-auto.diff
+# Patch:          viuer-fix-metadata-auto.diff
 
 BuildRequires:  cargo-rpm-macros >= 24
 
