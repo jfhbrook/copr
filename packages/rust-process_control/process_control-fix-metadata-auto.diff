@@ -1,0 +1,29 @@
+--- process_control-5.1.1/Cargo.toml	1970-01-01T00:00:01+00:00
++++ process_control-5.1.1/Cargo.toml	2025-06-15T20:23:08.478771+00:00
+@@ -64,26 +64,6 @@
+ [dependencies.attr_alias]
+ version = "0.1.0"
+ 
+-[target.'cfg(all(unix, any(target_os = "espidf", target_os = "horizon", target_os = "openbsd", target_os = "redox", target_os = "tvos", target_os = "vxworks")))'.dependencies.parking_lot]
+-version = "0.12"
+-optional = true
+-
+-[target.'cfg(all(unix, any(target_os = "espidf", target_os = "horizon", target_os = "openbsd", target_os = "redox", target_os = "tvos", target_os = "vxworks")))'.dependencies.signal-hook]
+-version = "0.3"
+-
+ [target."cfg(unix)".dependencies.libc]
+ version = "0.2.120"
+ 
+-[target."cfg(windows)".dependencies.windows-sys]
+-version = "0.60"
+-features = [
+-    "Win32_Foundation",
+-    "Win32_Security",
+-    "Win32_Storage_FileSystem",
+-    "Win32_System_JobObjects",
+-    "Win32_System_IO",
+-    "Win32_System_Threading",
+-]
+-
+-[target."cfg(windows)".dev-dependencies.rustversion]
+-version = "1.0"
