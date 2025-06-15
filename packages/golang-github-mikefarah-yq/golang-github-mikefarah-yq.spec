@@ -49,7 +49,6 @@ Source:         %{gosource}
 
 %prep
 %goprep -A
-# %autopatch -p1
 
 %if %{without bootstrap}
 %generate_buildrequires
@@ -58,9 +57,6 @@ Source:         %{gosource}
 
 %if %{without bootstrap}
 %build
-# for cmd in cmd/* ; do
-#   %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
-# done
 %gobuild -o %{gobuilddir}/bin/yq %{goipath}
 %endif
 
