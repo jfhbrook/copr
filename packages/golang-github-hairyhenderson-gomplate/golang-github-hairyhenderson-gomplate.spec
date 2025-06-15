@@ -10,9 +10,9 @@
 %global __requires_exclude %{?__requires_exclude:%{__requires_exclude}|}^golang\\(.*\\)$
 %endif
 
-# https://github.com/mikefarah/yq
-%global goipath         github.com/mikefarah/yq
-Version:                4.45.4
+# https://github.com/hairyhenderson/gomplate
+%global goipath         github.com/hairyhenderson/gomplate
+Version:                4.3.2
 
 # REMOVE BEFORE SUBMITTING THIS FOR REVIEW
 # ---
@@ -27,17 +27,16 @@ Version:                4.45.4
 %gometa -L -f
 
 %global common_description %{expand:
-Yq is a portable command-line YAML, JSON, XML, CSV, TOML  and properties
-processor.}
+A flexible commandline tool for template rendering. Supports lots of local and
+remote datasources.}
 
 %global golicenses      LICENSE
-%global godocs          examples CODE_OF_CONDUCT.md CONTRIBUTING.md README.md\\\
-                        how-it-works.md project-words.txt\\\
-                        release_instructions.txt release_notes.txt doc
+%global godocs          docs CHANGELOG.md CONTRIBUTING.md README.md docs-\\\
+                        src/content/functions/func_doc.md.tmpl
 
-Name:           golang-github-mikefarah-yq
+Name:           golang-github-hairyhenderson-gomplate
 Release:        %autorelease
-Summary:        Yq is a portable command-line YAML, JSON, XML, CSV, TOML  and properties processor
+Summary:        A flexible commandline tool for template rendering. Supports lots of local and remote datasources
 
 License:        MIT
 URL:            %{gourl}
@@ -49,6 +48,7 @@ Source:         %{gosource}
 
 %prep
 %goprep -A
+%autopatch -p1
 
 %if %{without bootstrap}
 %generate_buildrequires
@@ -57,7 +57,12 @@ Source:         %{gosource}
 
 %if %{without bootstrap}
 %build
-%gobuild -o %{gobuilddir}/bin/yq %{goipath}
+for cmd in cmd/* ; do
+  %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
+done
+for cmd in version/gen; do
+  %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
+done
 %endif
 
 %install
@@ -77,9 +82,16 @@ install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 %if %{without bootstrap}
 %files
 %license LICENSE
-%doc examples CODE_OF_CONDUCT.md CONTRIBUTING.md README.md how-it-works.md
-%doc project-words.txt release_instructions.txt release_notes.txt doc
-%{_bindir}/yq
+%doc docs CHANGELOG.md CONTRIBUTING.md README.md
+%doc docs-src/content/functions/func_doc.md.tmpl
+# REMOVE BEFORE SUBMITTING THIS FOR REVIEW
+# ---
+# New Fedora packages should not use globs to avoid installing conflicting
+# binaries.
+# Write a _bindir line per each of the binaries the package will install.
+# ---
+# REMOVE BEFORE SUBMITTING THIS FOR REVIEW
+%{_bindir}/*
 %endif
 
 %gopkgfiles

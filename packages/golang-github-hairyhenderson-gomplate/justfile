@@ -1,4 +1,4 @@
-SPEC := "golang-github-mikefarah-yq.spec"
+SPEC := "golang-github-hairyhenderson-gomplate.spec"
 
 # Build the source rpm
 srpm:

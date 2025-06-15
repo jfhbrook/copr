@@ -1,15 +1,15 @@
 apiVersion: coprctl/v1alpha1
 kind: package-scm
 metadata:
-  name: golang-github-mikefarah-yq
+  name: golang-github-hairyhenderson-gomplate
 spec:
   auto_rebuild: false
   ownername: jfhbrook
   projectname: joshiverse
   clone-url: https://github.com/jfhbrook/copr
   commit: null
-  subdir: packages/golang-github-mikefarah-yq
-  spec: golang-github-mikefarah-yq.spec
+  subdir: packages/golang-github-hairyhenderson-gomplate
+  spec: golang-github-hairyhenderson-gomplate.spec
   type: git
   method: make_srpm
   enable_net: true
