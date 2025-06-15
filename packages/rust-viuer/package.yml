@@ -1,0 +1,15 @@
+apiVersion: coprctl/v1alpha1
+kind: package-scm
+metadata:
+  name: rust-viuer
+spec:
+  auto_rebuild: false
+  ownername: jfhbrook
+  projectname: joshiverse
+  clone-url: https://github.com/jfhbrook/copr
+  commit: null
+  subdir: packages/rust-viuer
+  spec: rust-viuer.spec
+  type: git
+  method: make_srpm
+  enable_net: true
