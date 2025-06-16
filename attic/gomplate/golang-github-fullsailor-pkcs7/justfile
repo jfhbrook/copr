@@ -1,0 +1,30 @@
+SPEC := "golang-github-fullsailor-pkcs7.spec"
+
+# Build the source rpm
+srpm:
+  ../../scripts/build-srpm.sh '{{ SPEC }}'
+
+# Verify the source rpm
+verify: srpm
+  ../../scripts/verify-srpm.sh
+
+lint:
+  shellcheck ./srpm.sh
+
+# Build and verify
+test: clean srpm verify
+
+# Clean files created from building and verifying
+clean:
+  ../../scripts/clean-srpm.sh '{{ SPEC }}'
+
+# Fail if there are uncommitted files
+check-dirty:
+  ../../scripts/is-dirty.sh
+
+# Apply copr configuration
+apply:
+  coprctl apply -f ./package.yml
+
+build: check-dirty apply
+  ../../scripts/build-copr-spec.sh '{{ SPEC }}'
