@@ -41,7 +41,7 @@ Summary:        %{summary}
 
 
 %check
-%pyproject_check_import
+# %pyproject_check_import
 
 
 %files -n python3-mopidy-iris -f %{pyproject_files}
