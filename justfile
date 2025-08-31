@@ -13,3 +13,6 @@ lint:
 # Build the Docker image
 build-docker:
   docker build -t 'copr-dev' .
+
+build-all:
+  bash ./scripts/build-all.sh
