@@ -1,6 +1,6 @@
 Name:           python-mopidy-iris
 Version:        3.70.0
-Release:        2
+Release:        3
 Summary:        Fully-featured Mopidy frontend client
 
 License:        Apache-2.0
@@ -37,7 +37,7 @@ Summary:        %{summary}
 %install
 %pyproject_install
 # Add top-level Python module names here as arguments, you can use globs
-%pyproject_save_files -l ...
+%pyproject_save_files -l mopidy_iris
 
 
 %check
