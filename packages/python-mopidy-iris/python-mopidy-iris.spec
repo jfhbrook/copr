@@ -40,7 +40,7 @@ Summary:        %{summary}
 %pyproject_save_files -l mopidy_iris
 
 
-%check
+# %check
 # %pyproject_check_import
 
 
